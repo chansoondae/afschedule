@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import BottomNav from '@/components/BottomNav'
 
 export const metadata: Metadata = {
   title: '아트프렌즈 아트버스 캘린더',
@@ -20,7 +21,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="min-h-screen" style={{ backgroundColor: '#F8F6F0' }}>
-        {children}
+        <div className="flex justify-center min-h-screen">
+          <div className="w-full max-w-[480px] min-h-screen flex flex-col bg-white shadow-sm relative">
+            {children}
+            <BottomNav />
+          </div>
+        </div>
       </body>
     </html>
   )

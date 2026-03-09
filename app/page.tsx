@@ -147,10 +147,9 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex justify-center" style={{ backgroundColor: '#F8F6F0' }}>
-      <div className="w-full max-w-[480px] min-h-screen flex flex-col bg-white shadow-sm">
+    <div className="flex flex-col min-h-screen pb-16">
         {/* 앱 헤더 */}
-        <header className="px-5 pt-safe-top py-4 border-b border-stone-100">
+        <header className="px-5 py-4 border-b border-stone-100">
           <div className="flex items-center gap-2">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
@@ -208,7 +207,6 @@ export default function Home() {
             onClose={() => setShowForm(false)}
           />
         )}
-      </div>
     </div>
   )
 }

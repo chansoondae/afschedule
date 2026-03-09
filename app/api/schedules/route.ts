@@ -5,6 +5,25 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const year = searchParams.get('year')
   const month = searchParams.get('month')
+  const staffId = searchParams.get('staff_id')
+
+  // 스탭별 전체 일정 조회
+  if (staffId) {
+    const { data, error } = await supabase
+      .from('schedules')
+      .select(`
+        *,
+        staffs (id, nickname),
+        destinations (id, name, color)
+      `)
+      .eq('staff_id', staffId)
+      .order('date', { ascending: true })
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    return NextResponse.json(data)
+  }
 
   if (!year || !month) {
     return NextResponse.json({ error: 'year and month are required' }, { status: 400 })
