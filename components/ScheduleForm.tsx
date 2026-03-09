@@ -9,6 +9,7 @@ interface ScheduleFormProps {
   schedule?: Schedule | null
   staffs: Staff[]
   destinations: Destination[]
+  defaultStaffIds?: string[]
   onSave: (data: FormData) => Promise<void>
   onDelete?: () => Promise<void>
   onClose: () => void
@@ -27,6 +28,7 @@ export default function ScheduleForm({
   schedule,
   staffs,
   destinations,
+  defaultStaffIds,
   onSave,
   onDelete,
   onClose,
@@ -38,7 +40,7 @@ export default function ScheduleForm({
     schedule?.destination_id || ''
   )
   const [selectedStaffIds, setSelectedStaffIds] = useState<string[]>(
-    schedule ? [schedule.staff_id] : []
+    schedule ? [schedule.staff_id] : (defaultStaffIds ?? [])
   )
   const [status, setStatus] = useState<'available' | 'confirmed' | 'cancelled'>(
     schedule?.status || 'available'

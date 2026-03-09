@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Staff, Schedule } from '@/lib/types'
+import { Staff, Schedule, Destination } from '@/lib/types'
 import DestinationBadge from '@/components/DestinationBadge'
+import ScheduleForm from '@/components/ScheduleForm'
 import { STATUS_LABELS, STATUS_COLORS } from '@/lib/constants'
 
 const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
@@ -19,19 +20,25 @@ function formatDate(dateStr: string) {
 
 export default function StaffPage() {
   const [staffs, setStaffs] = useState<Staff[]>([])
+  const [destinations, setDestinations] = useState<Destination[]>([])
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null)
   const [schedules, setSchedules] = useState<Schedule[]>([])
   const [loadingStaffs, setLoadingStaffs] = useState(true)
   const [loadingSchedules, setLoadingSchedules] = useState(false)
 
+  // 폼 상태
+  const [showForm, setShowForm] = useState(false)
+  const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null)
+  const [formDate, setFormDate] = useState('')
+
   useEffect(() => {
-    fetch('/api/staffs')
-      .then(r => r.json())
-      .then((data: Staff[]) => {
-        // 닉네임 가나다 순 정렬
-        setStaffs(data.sort((a, b) => a.nickname.localeCompare(b.nickname, 'ko')))
-      })
-      .finally(() => setLoadingStaffs(false))
+    Promise.all([
+      fetch('/api/staffs').then(r => r.json()),
+      fetch('/api/destinations').then(r => r.json()),
+    ]).then(([staffData, destData]) => {
+      setStaffs((staffData as Staff[]).sort((a, b) => a.nickname.localeCompare(b.nickname, 'ko')))
+      setDestinations(destData)
+    }).finally(() => setLoadingStaffs(false))
   }, [])
 
   const fetchSchedules = useCallback(async (staff: Staff) => {
@@ -49,26 +56,86 @@ export default function StaffPage() {
     fetchSchedules(staff)
   }
 
+  const handleAddSchedule = () => {
+    setEditingSchedule(null)
+    setFormDate('')
+    setShowForm(true)
+  }
+
+  const handleEditSchedule = (schedule: Schedule) => {
+    setEditingSchedule(schedule)
+    setFormDate(schedule.date)
+    setShowForm(true)
+  }
+
+  const handleSave = async (formData: {
+    date: string
+    destination_id: string | null
+    staff_ids: string[]
+    status: 'available' | 'confirmed' | 'cancelled'
+    note: string
+  }) => {
+    if (editingSchedule) {
+      await fetch(`/api/schedules/${editingSchedule.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destination_id: formData.destination_id,
+          status: formData.status,
+          note: formData.note,
+        }),
+      })
+    } else {
+      await fetch('/api/schedules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+    }
+    if (selectedStaff) await fetchSchedules(selectedStaff)
+  }
+
+  const handleDelete = async () => {
+    if (!editingSchedule) return
+    await fetch(`/api/schedules/${editingSchedule.id}`, { method: 'DELETE' })
+    if (selectedStaff) await fetchSchedules(selectedStaff)
+  }
+
+
   return (
     <div className="flex flex-col min-h-screen pb-16">
       {/* 헤더 */}
       <header className="px-5 py-4 border-b border-stone-100">
-        <div className="flex items-center gap-2">
-          <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center"
-            style={{ backgroundColor: '#2D5016' }}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <circle cx="6" cy="5" r="2.5" stroke="white" strokeWidth="1.2"/>
-              <path d="M1 12c0-2.5 2.24-4.5 5-4.5" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
-              <circle cx="11" cy="10" r="2" stroke="white" strokeWidth="1.2"/>
-              <path d="M9.5 10h3M11 8.5v3" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
-            </svg>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center"
+              style={{ backgroundColor: '#2D5016' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="6" cy="5" r="2.5" stroke="white" strokeWidth="1.2"/>
+                <path d="M1 12c0-2.5 2.24-4.5 5-4.5" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+                <circle cx="11" cy="10" r="2" stroke="white" strokeWidth="1.2"/>
+                <path d="M9.5 10h3M11 8.5v3" stroke="white" strokeWidth="1.2" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-sm font-bold text-stone-800 leading-tight">아트프렌즈</h1>
+              <p className="text-[10px] text-stone-400 leading-tight">스탭 스케줄</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-sm font-bold text-stone-800 leading-tight">아트프렌즈</h1>
-            <p className="text-[10px] text-stone-400 leading-tight">스탭 스케줄</p>
-          </div>
+          {/* 일정 추가 버튼 */}
+          {selectedStaff && (
+            <button
+              onClick={handleAddSchedule}
+              className="flex items-center gap-1.5 bg-stone-800 text-white text-sm px-4 py-2 rounded-full hover:bg-stone-700 active:bg-stone-900 transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M7 1v12M1 7h12" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              일정 추가
+            </button>
+          )}
         </div>
       </header>
 
@@ -144,9 +211,10 @@ export default function StaffPage() {
                 const destColor = s.destinations?.color || '#9CA3AF'
 
                 return (
-                  <div
+                  <button
                     key={s.id}
-                    className="flex items-center gap-4 bg-stone-50 rounded-2xl px-4 py-3.5"
+                    onClick={() => handleEditSchedule(s)}
+                    className="w-full flex items-center gap-4 bg-stone-50 rounded-2xl px-4 py-3.5 text-left hover:bg-stone-100 active:bg-stone-200 transition-colors"
                   >
                     {/* 날짜 */}
                     <div className="flex-shrink-0 text-center w-10">
@@ -185,13 +253,32 @@ export default function StaffPage() {
                         <p className="text-xs text-stone-400 mt-1 truncate">{s.note}</p>
                       )}
                     </div>
-                  </div>
+
+                    {/* 수정 화살표 */}
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="flex-shrink-0 opacity-30">
+                      <path d="M6 4l4 4-4 4" stroke="#1C1917" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
                 )
               })}
             </div>
           </>
         )}
       </div>
+
+      {/* 일정 폼 */}
+      {showForm && (
+        <ScheduleForm
+          date={formDate}
+          schedule={editingSchedule}
+          staffs={staffs}
+          destinations={destinations}
+          defaultStaffIds={selectedStaff && !editingSchedule ? [selectedStaff.id] : undefined}
+          onSave={handleSave}
+          onDelete={editingSchedule ? handleDelete : undefined}
+          onClose={() => setShowForm(false)}
+        />
+      )}
     </div>
   )
 }
