@@ -10,10 +10,10 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
   if (name) {
     return {
-      title: `${name} | 아트프렌즈 스케줄`,
+      title: `${name} | 🚌아트버스 스케줄`,
       description: `${name}님의 아트버스 스케줄을 확인하세요.`,
       openGraph: {
-        title: `${name} | 아트프렌즈 스케줄`,
+        title: `${name} | 🚌아트버스 스케줄`,
         description: `${name}님의 아트버스 스케줄을 확인하세요.`,
       },
     }
