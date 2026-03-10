@@ -64,15 +64,16 @@ function StaffClient() {
       fetch('/api/staffs').then(r => r.json()),
       fetch('/api/destinations').then(r => r.json()),
     ]).then(([staffData, destData]) => {
-      const sorted = (staffData as Staff[]).sort((a, b) => a.nickname.localeCompare(b.nickname, 'ko'))
+      const sorted = staffData as Staff[]
       setStaffs(sorted)
       setDestinations(destData)
-      if (nameParam) {
-        const matched = sorted.find(s => s.nickname === nameParam)
-        if (matched) {
-          setSelectedStaff(matched)
-          fetchSchedules(matched)
-        }
+      // name 파라미터 있으면 해당 스탭, 없으면 첫 번째 스탭 선택
+      const target = nameParam
+        ? sorted.find(s => s.nickname === nameParam)
+        : sorted[0]
+      if (target) {
+        setSelectedStaff(target)
+        fetchSchedules(target)
       }
     }).finally(() => setLoadingStaffs(false))
   // nameParam은 초기 1회만 읽으면 되므로 의존성 배열에서 제외

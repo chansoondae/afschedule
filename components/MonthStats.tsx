@@ -67,7 +67,7 @@ export default function MonthStats({ schedulesByDate }: MonthStatsProps) {
               {s.icon}
               <span className="text-[10px] font-medium text-stone-400 uppercase tracking-wide">{s.label}</span>
             </div>
-            <p className="text-2xl font-bold text-stone-800 leading-tight">
+            <p className="text-2xl font-bold leading-tight" style={{ color: '#2D5016' }}>
               {s.value}
               <span className="text-sm font-normal text-stone-400 ml-0.5">{s.unit}</span>
             </p>
