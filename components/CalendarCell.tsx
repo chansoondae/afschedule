@@ -24,12 +24,12 @@ export default function CalendarCell({
   }
 
   // 목적지별 그룹 (색상 도트 + 닉네임 표시용)
-  const destinationGroups = schedules.reduce<Record<string, { color: string; name: string; staffs: string[] }>>(
+  const destinationGroups = schedules.reduce<Record<string, { color: string; name: string; staffs: string[]; nights: number | null }>>(
     (acc, s) => {
       const key = s.destinations?.id || 'undecided'
       const name = s.destinations?.name || '미정'
       const color = s.destinations?.color || '#9CA3AF'
-      if (!acc[key]) acc[key] = { color, name, staffs: [] }
+      if (!acc[key]) acc[key] = { color, name, staffs: [], nights: s.nights ?? null }
       if (s.staffs?.nickname) acc[key].staffs.push(s.staffs.nickname)
       return acc
     },

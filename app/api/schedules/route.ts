@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
-  const { date, destination_id, staff_ids, status, note } = body
+  const { date, destination_id, staff_ids, status, note, nights } = body
 
   if (!date || !staff_ids || staff_ids.length === 0) {
     return NextResponse.json({ error: 'date and staff_ids are required' }, { status: 400 })
@@ -66,6 +66,7 @@ export async function POST(request: NextRequest) {
     staff_id,
     status: status || 'available',
     note: note || null,
+    nights: nights || null,
   }))
 
   const { data, error } = await supabase

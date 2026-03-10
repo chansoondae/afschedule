@@ -8,6 +8,7 @@ export const DESTINATION_COLORS: Record<string, string> = {
   '영주': '#0F766E',
   '솔올': '#E8590C',
   '대전': '#0EA5E9',
+  '제주': '#F97316',
   '미정': '#9CA3AF',
 }
 

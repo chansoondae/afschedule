@@ -18,6 +18,7 @@ export interface Schedule {
   staff_id: string
   status: 'available' | 'confirmed' | 'cancelled'
   note: string | null
+  nights: number | null
   created_at: string
   updated_at: string
   staffs?: Staff

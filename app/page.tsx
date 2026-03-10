@@ -103,6 +103,7 @@ export default function Home() {
     staff_ids: string[]
     status: 'available' | 'confirmed' | 'cancelled'
     note: string
+    nights: number | null
   }) => {
     if (editingSchedule) {
       await fetch(`/api/schedules/${editingSchedule.id}`, {
@@ -112,6 +113,7 @@ export default function Home() {
           destination_id: formData.destination_id,
           status: formData.status,
           note: formData.note,
+          nights: formData.nights,
         }),
       })
     } else {

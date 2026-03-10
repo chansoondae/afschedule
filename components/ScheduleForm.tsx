@@ -21,6 +21,7 @@ interface FormData {
   staff_ids: string[]
   status: 'available' | 'confirmed' | 'cancelled'
   note: string
+  nights: number | null
 }
 
 export default function ScheduleForm({
@@ -46,6 +47,7 @@ export default function ScheduleForm({
     schedule?.status || 'available'
   )
   const [note, setNote] = useState(schedule?.note || '')
+  const [nights, setNights] = useState<number | null>(schedule?.nights ?? null)
   const [loading, setLoading] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
@@ -73,6 +75,7 @@ export default function ScheduleForm({
         staff_ids: selectedStaffIds,
         status,
         note,
+        nights,
       })
       onClose()
     } finally {
@@ -213,6 +216,27 @@ export default function ScheduleForm({
                       }`}
                   >
                     {STATUS_LABELS[s]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 숙박 */}
+            <div>
+              <label className="block text-xs font-semibold text-stone-500 mb-1.5 uppercase tracking-wide">숙박 (선택)</label>
+              <div className="flex gap-2">
+                {[null, 1, 2, 3].map((n) => (
+                  <button
+                    key={String(n)}
+                    type="button"
+                    onClick={() => setNights(n)}
+                    className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors
+                      ${nights === n
+                        ? 'bg-stone-800 text-white'
+                        : 'bg-stone-50 text-stone-500 hover:bg-stone-100'
+                      }`}
+                  >
+                    {n === null ? '당일' : `${n}박${n + 1}일`}
                   </button>
                 ))}
               </div>

@@ -7,12 +7,13 @@ export async function PATCH(
 ) {
   const { id } = await params
   const body = await request.json()
-  const { destination_id, status, note } = body
+  const { destination_id, status, note, nights } = body
 
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() }
   if (destination_id !== undefined) updates.destination_id = destination_id
   if (status !== undefined) updates.status = status
   if (note !== undefined) updates.note = note
+  if (nights !== undefined) updates.nights = nights
 
   const { data, error } = await supabase
     .from('schedules')
