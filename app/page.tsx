@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Calendar from '@/components/Calendar'
 import BottomSheet from '@/components/BottomSheet'
 import ScheduleForm from '@/components/ScheduleForm'
+import MonthStats from '@/components/MonthStats'
 import { Schedule, Staff, Destination, SchedulesByDate } from '@/lib/types'
 
 export default function Home() {
@@ -168,7 +169,7 @@ export default function Home() {
         </header>
 
         {/* 캘린더 */}
-        <main className="flex-1 relative">
+        <main className="relative">
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
               <div className="w-6 h-6 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin" />
@@ -183,6 +184,9 @@ export default function Home() {
             onDateClick={handleDateClick}
           />
         </main>
+
+        {/* 월간 통계 */}
+        <MonthStats schedulesByDate={schedulesByDate} />
 
         {/* 바텀시트 */}
         {selectedDate && (
