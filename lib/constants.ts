@@ -14,7 +14,7 @@ export const DESTINATION_COLORS: Record<string, string> = {
 export const STAFF_NICKNAMES = [
   '까비', '미술관가는날', '파랑새홍', '무아', '에이미',
   '세계여행', '그린이', '써니', '제씨킴', '티아라',
-  '건빵', '연지빛', '토이와', '바람은',
+  '건빵', '연지빛', '토이와', '바람은', '알베르게',
 ]
 
 export const STATUS_LABELS: Record<string, string> = {
