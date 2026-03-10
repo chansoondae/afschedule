@@ -225,7 +225,7 @@ export default function ScheduleForm({
             <div>
               <label className="block text-xs font-semibold text-stone-500 mb-1.5 uppercase tracking-wide">숙박 (선택)</label>
               <div className="flex gap-2">
-                {[null, 1, 2, 3].map((n) => (
+                {[null, 1].map((n) => (
                   <button
                     key={String(n)}
                     type="button"
